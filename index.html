@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试用例</title>
+</head>
+<style>
+    html,
+    body {
+      margin: 0px;
+      height: 100%;
+      width: 100%;
+      font-size:10px;
+    }
+    #map_wrapper {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      z-index:0
+    }
+
+</style>
+
+<link rel="stylesheet" href="./css/compass.css">
+<link rel="stylesheet" href="./css/common.css">
+<link rel='stylesheet' href='https://maptalks.com/api/maptalks.css' />
+<script type='text/javascript' src='https://maptalks.com/api/maptalks.min.js'></script>
+<script type='text/javascript' src='https://maptalks.com/api/maptalks-gl-layers.js'></script>
+<script type='text/javascript' src='./js/ToolSet.js'></script>
+
+<body>
+    <div id="map_wrapper"></div>
+    <script type="module">
+        const map = new maptalks.Map("map_wrapper", {
+            center: [121.473667,31.230525],
+            zoom: 14,
+            baseLayer: new maptalks.TileLayer("base", {
+                urlTemplate: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+                subdomains: ["a", "b", "c", "d"],
+                attribution: "&copy; <a href='http://osm.org'>OpenStreetMap</a> contributors, &copy; <a href='https://carto.com/'>CARTO</a>",
+            }),
+            layers: [new maptalks.VectorLayer("v")],
+        });
+        /**
+         * @description 地图指南针
+        */
+        let compass =  new ToolSet.Compass_UI({
+            position:{
+                bottom:"13rem",
+                right:0
+            },
+            map:map
+        });
+        /**
+         * @description 地图打印
+        */
+        let mapPrint =  new ToolSet.MapPrint({
+            showUI:true,
+            loadBaseMap:{
+                type:'map',//如果type是map则baseMap传map，如果type是img，则baseMap传图片地址
+                baseMap:map,
+                // type:'img',
+                // baseMap:'./imgs/2.png',
+                save:false,//是否允许自动下载
+            },
+            // printArea:"100,100,10,10",//1、若传字符串，传入宽、高、x坐标、y坐标进行截图，若不传这个字段则使用默认的自定义绘制截图
+            callback:callback,
+        });
+        function callback(type,data){
+            var link = document.createElement('a');
+            link.download = 'screenshot.png';
+            link.href = data;
+            link.click();
+            mapPrint.subscribe(map)
+        };
+
+        map.on("click",changeMapState);
+        function changeMapState(){
+            mapPrint.subscribe(map,true)
+        }
+
+         /**地图上的旋转拖拽操作事件*/
+        map.on("dragrotating",()=>{
+            let compass = document.querySelector(".compass");
+            let bearing = map.getBearing();
+            let pitch = map.getPitch();
+            compass.style.transform = `rotateX(${pitch}deg) rotateZ(${-bearing}deg)`;
+        });
+
+    </script>
+</body>
+</html>

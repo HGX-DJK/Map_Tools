@@ -1,0 +1,34 @@
+.sl-wrapper{
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  z-index: 1000;
+}
+
+.sl-container{
+  display: flex;
+  font-size: 1.4rem;
+}
+.sl-draw-btn{
+  border:1px solid #c1c1c1;
+  padding:5px 8px;
+  cursor: pointer;
+  margin-right: 1rem;
+  border-radius: 4px;
+  background: #fff;
+}
+.sl-canvas-img{
+  position: absolute;
+  top: 0;
+  z-index: -1;
+}
+.sl-canvas-rect{
+  position: absolute;
+  top: 0;
+  z-index: 2;
+}
+.sl-canvas{
+  position: absolute;
+  top: 0;
+  z-index: 3;
+}
